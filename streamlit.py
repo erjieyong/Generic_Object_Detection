@@ -296,6 +296,7 @@ if picture:
         org_img = img_read_resize(picture, max_width= 640)
         cropped_img = crop_background(org_img, threshold_type = crop_threshold, threshold_manual_val = crop_manual_threshold, threshold_adaptive_val=crop_adaptive_constant, filter_diameter = crop_filter_diameter, kernel_size = crop_kernel, crop_percent = crop_percent)
         print(type(cropped_img))
+        st.write("Please ensure that the background is completely removed before detection to ensure result accuracy. Try tweaking the crop settings.")
         st.image(cropped_img, use_column_width = True)
         st.session_state.disabled = False
         st.session_state.cropped_img = cropped_img
