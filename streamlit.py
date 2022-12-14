@@ -207,6 +207,11 @@ def display_contours(cropped_image, markers, contour_percentile = 0.3, contour_t
 # STREAMLIT
 st.title("Object Counting")
 
+# create variables for usage later
+st.session_state.disabled = True
+cropped_img = None
+
+
 cam_picture = st.camera_input("Take a picture")
 upload_picture = st.file_uploader("Choose a file")
 picture = None
@@ -215,6 +220,15 @@ if cam_picture:
 elif upload_picture:
     picture = upload_picture
 
+col1, col2, col3, col4, col5 = st.columns(5)
+with col3:
+    # generate crop button
+    crop_detect_btn = st.button("Crop & Detect", key = "crop_detect_btn")
+
+# create output container to display all outputs
+output = st.container()
+
+# create sidebar for more granular fine tuning
 with st.sidebar:
     st.subheader("Fine tune crop and detection settings")
     # CROP SETTINGS
@@ -243,6 +257,20 @@ with st.sidebar:
             crop_adaptive_constant = st.slider("Adaptive constant", 0, 30, crop_adaptive_constant, help = "Constant value to substract from the mean of neighbouring area based on block size 21")
         elif st.session_state.crop_thres == "Manual":
             crop_manual_threshold = st.slider("Manual threshold", 0, 255, crop_manual_threshold, help = "Any pixel value exceeding threshold would be assigned white color")
+
+        # generate crop button first
+        crop_btn = st.button("Crop", key = "crop_btn")
+
+        # check if there's picture. If yes, run crop function and enable detect button
+        if picture:
+            if crop_btn:
+                org_img = img_read_resize(picture, max_width= 640)
+                cropped_img = crop_background(org_img, threshold_type = crop_threshold, threshold_manual_val = crop_manual_threshold, threshold_adaptive_val=crop_adaptive_constant, filter_diameter = crop_filter_diameter, kernel_size = crop_kernel, crop_percent = crop_percent)
+                output.write("Please ensure that the background is completely removed before detection to ensure result accuracy. Try tweaking the crop settings.")
+                output.image(cropped_img, use_column_width = True)
+                st.session_state.disabled = False
+                st.session_state.cropped_img = cropped_img
+
 
     # DETECTION SETTINGS
     with st.expander("Detection Settings"):
@@ -280,35 +308,25 @@ with st.sidebar:
         contour_percentile = st.slider("Percentile of countour to take average of", 0.1, 0.5, contour_percentile, help = "If 0.3 is selected, the average of the 30th and 70th percentile of all countours detected would be used to calculate the average coutour area")
 
         countour_thres = st.slider("Countour threshold", 1.0, 10.0, contour_thres, help = "If contour threshold is set at 2, the acceptable detected contour would be between (average contour area / 2) and (average contour area * 2)")
+    
 
 
-# BUTTONS and BUTTON ACTIONS
-col1, col2, col3, col4, col5 = st.columns(5)
+        detect_btn = st.button("Detect", disabled = st.session_state.disabled)
 
-st.session_state.disabled = True
+        if detect_btn:
+            markers, counter = object_count(st.session_state.cropped_img, blur_kernel_size = detection_blur_kernel, erode_kernel_size = detection_erode_kernel, erode_iteration = detection_erode_iteration, dilate_kernel_size = detection_dilating_kernel, dilate_iteration = detection_dilating_iteration, open_kernel_size = detection_open_kernel, open_iteration = detection_open_iteration, close_kernel_size = detection_closing_kernel, close_iteration = detection_closing_iteration)
+            final_img, counter = display_contours(st.session_state.cropped_img, markers, contour_percentile=contour_percentile, contour_thres=contour_thres)
+            output.success(f"{counter} objects detected!")
+            output.image(final_img, use_column_width = True)
 
-with col2:    
-    crop_btn = st.button("Crop", key = "crop_btn")
-
-cropped_img = None
+# crop and detect button actions
 if picture:
-    if crop_btn:
+    if crop_detect_btn:
         org_img = img_read_resize(picture, max_width= 640)
         cropped_img = crop_background(org_img, threshold_type = crop_threshold, threshold_manual_val = crop_manual_threshold, threshold_adaptive_val=crop_adaptive_constant, filter_diameter = crop_filter_diameter, kernel_size = crop_kernel, crop_percent = crop_percent)
-        print(type(cropped_img))
-        st.write("Please ensure that the background is completely removed before detection to ensure result accuracy. Try tweaking the crop settings.")
-        st.image(cropped_img, use_column_width = True)
-        st.session_state.disabled = False
-        st.session_state.cropped_img = cropped_img
+        markers, counter = object_count(cropped_img, blur_kernel_size = detection_blur_kernel, erode_kernel_size = detection_erode_kernel, erode_iteration = detection_erode_iteration, dilate_kernel_size = detection_dilating_kernel, dilate_iteration = detection_dilating_iteration, open_kernel_size = detection_open_kernel, open_iteration = detection_open_iteration, close_kernel_size = detection_closing_kernel, close_iteration = detection_closing_iteration)
+        final_img, counter = display_contours(cropped_img, markers, contour_percentile=contour_percentile, contour_thres=contour_thres)
+        output.success(f"{counter} objects detected!")
+        output.image(final_img, use_column_width = True)
 else:
-    st.error("Please take a picture or upload a picture first!")
-
-with col4:
-    detect_btn = st.button("Detect", disabled = st.session_state.disabled)
-
-if detect_btn:
-    markers, counter = object_count(st.session_state.cropped_img, blur_kernel_size = detection_blur_kernel, erode_kernel_size = detection_erode_kernel, erode_iteration = detection_erode_iteration, dilate_kernel_size = detection_dilating_kernel, dilate_iteration = detection_dilating_iteration, open_kernel_size = detection_open_kernel, open_iteration = detection_open_iteration, close_kernel_size = detection_closing_kernel, close_iteration = detection_closing_iteration)
-    final_img, counter = display_contours(st.session_state.cropped_img, markers, contour_percentile=contour_percentile, contour_thres=contour_thres)
-    st.success(f"{counter} objects detected!")
-    st.image(final_img, use_column_width = True)
-    
+    output.error("Please take a picture or upload a picture first!")
