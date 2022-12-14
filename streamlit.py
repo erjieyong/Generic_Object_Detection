@@ -211,7 +211,7 @@ st.title("Object Counting")
 st.session_state.disabled = True
 cropped_img = None
 
-st.write("Guidelines: For best result and accuracy, please ensure that the picture is taken in well and evenly lit environment and place the object of interest on a plain background that is of different color from the object of interest")
+st.write("Guideline: For best result and accuracy, please ensure that the picture is taken in well and evenly lit environment and place the object of interest on a plain background that is of different color from the object of interest")
 
 cam_picture = st.camera_input("Take a picture")
 upload_picture = st.file_uploader("Choose a file")
