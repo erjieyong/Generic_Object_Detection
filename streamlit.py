@@ -186,6 +186,8 @@ def display_contours(cropped_image, markers, contour_percentile = 0.3, contour_t
     # Final check to ensure that our detected contours is between the average area of the 30th and 70th percentile of all the contours found.
     # if the detected contour is bigger than this average area or lesser than this average area by 30%, then ignore it
     def percentile_avg(percentile, target_list):
+        if len(target_list) == 0:
+            return 0
         target_list.sort()
         percentile_int = int(round(percentile*len(target_list)))
         average = sum(target_list[percentile_int:-percentile_int])/len(target_list[percentile_int:-percentile_int])
@@ -205,8 +207,13 @@ def display_contours(cropped_image, markers, contour_percentile = 0.3, contour_t
 # STREAMLIT
 st.title("Object Counting")
 
-picture = st.camera_input("Take a picture")
-picture = st.file_uploader("Choose a file")
+cam_picture = st.camera_input("Take a picture")
+upload_picture = st.file_uploader("Choose a file")
+picture = None
+if cam_picture:
+    picture = cam_picture
+elif upload_picture:
+    picture = upload_picture
 
 with st.sidebar:
     st.subheader("Fine tune crop and detection settings")
@@ -293,7 +300,7 @@ if picture:
         st.session_state.disabled = False
         st.session_state.cropped_img = cropped_img
 else:
-    st.error("Please take photo first!")
+    st.error("Please take a picture or upload a picture first!")
 
 with col4:
     detect_btn = st.button("Detect", disabled = st.session_state.disabled)
