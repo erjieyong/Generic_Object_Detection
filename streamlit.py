@@ -195,9 +195,7 @@ def display_contours(cropped_image, markers, contour_percentile = 0.3, contour_t
     
     counter = 0
     avg_3070 = percentile_avg(contour_percentile, contour_dict['areas'])
-    print(avg_3070)
     for i in range(len(contour_dict['contours'])):
-        print(contour_dict['areas'][i], avg_3070 * 0.5 <= contour_dict['areas'][i] <= avg_3070 * 1.5)
         if avg_3070 / contour_thres <= contour_dict['areas'][i] <= avg_3070 * contour_thres:
             final_image = cv2.drawContours(final_image, [contour_dict['contours'][i]], -1, contour_dict['colors'][i], 2)
             counter += 1
@@ -211,7 +209,10 @@ st.title("Object Counting")
 st.session_state.disabled = True
 cropped_img = None
 
-st.caption("Guideline: For best result and accuracy, please ensure that the picture is taken in well and evenly lit environment and place the object of interest on a plain background that is of different color from the object of interest")
+st.caption("""Guideline: For best result and accuracy,  \n
+- Place the object of interest on a plain background that is of different color from the object of interest  \n
+- Recommend to take picture using phone camera app with flash and upload the image
+- Hold the camera square and straight up on top of the object""")
 
 cam_picture = st.camera_input("Take a picture")
 upload_picture = st.file_uploader("Choose a file")
@@ -281,9 +282,9 @@ with st.sidebar:
         detection_erode_iteration = 1
         detection_dilate_kernel_size = 3
         detection_dilate_iteration = 1
-        detection_open_kernel_size = 0
-        detection_open_iteration = 0
-        detection_close_kernel_size = 0
+        detection_open_kernel_size = 3
+        detection_open_iteration = 1
+        detection_close_kernel_size = 3
         detection_close_iteration = 0
         contour_percentile = 0.3
         contour_thres = 2.0
@@ -319,6 +320,12 @@ with st.sidebar:
             final_img, counter = display_contours(st.session_state.cropped_img, markers, contour_percentile=contour_percentile, contour_thres=contour_thres)
             output.success(f"{counter} objects detected!")
             output.image(final_img, use_column_width = True)
+
+    st.caption("Input Example:")
+    st.image("https://generalassemblydsi32.s3.ap-southeast-1.amazonaws.com/Generic_Object_Detection/input.jpg")
+
+    st.caption("Output Example:")
+    st.image("https://generalassemblydsi32.s3.ap-southeast-1.amazonaws.com/Generic_Object_Detection/output.jpg")
 
 # crop and detect button actions
 if picture:
