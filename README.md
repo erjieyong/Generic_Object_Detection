@@ -1,5 +1,7 @@
 # Generic Object Detection and Count
-##### Auto detection and count of object from photos without using pre-trained model
+#### Auto detection and count of object from photos without using pre-trained model
+
+**Try it out on Streamlit**: https://erjieyong-generic-object-detection-streamlit-zl4ev3.streamlit.app/
 
 ## Background
 Object counting is an extremely prevelant task in many industries which is both time consuming and offers little added value. Examples such as
