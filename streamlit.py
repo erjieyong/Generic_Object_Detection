@@ -214,7 +214,7 @@ st.caption("""Guideline: For best result and accuracy,  \n
 - Strongly recommend to take picture using phone camera app with FLASH 📸 and upload the image
 - Hold the camera square and straight up on top of the object""")
 
-st.caption("Github link: [github/erjieyong](https://github.com/erjieyong/Data_Science_Projects/tree/main/Inventory_Optimisation)")
+st.caption("Github link: [github/erjieyong](https://github.com/erjieyong/Generic_Object_Detection)")
 
 cam_picture = st.camera_input("Take a picture")
 upload_picture = st.file_uploader("Choose a file")
