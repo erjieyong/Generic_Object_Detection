@@ -203,7 +203,7 @@ def display_contours(cropped_image, markers, contour_percentile = 0.3, contour_t
     return final_image, counter
 
 # STREAMLIT
-st.title("Object Counting")
+st.title("Object Detection and Counting")
 
 # create variables for usage later
 st.session_state.disabled = True
@@ -211,7 +211,7 @@ cropped_img = None
 
 st.caption("""Guideline: For best result and accuracy,  \n
 - Place the object of interest on a plain background that is of different color from the object of interest  \n
-- Recommend to take picture using phone camera app with flash and upload the image
+- Strongly recommend to take picture using phone camera app with FLASH 📸 and upload the image
 - Hold the camera square and straight up on top of the object""")
 
 cam_picture = st.camera_input("Take a picture")
