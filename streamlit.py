@@ -299,11 +299,11 @@ with st.sidebar:
 
         detection_dilating_iteration = st.slider("Dilating Iterations", 0, 10, detection_dilate_iteration, help = "Number of iterations to perform dilating action")
 
-        detection_open_kernel = st.slider("Open kernel size (odd number)", 1, 31, detection_open_kernel_size, step=2, help = "Bigger kernel size will have larger area of effect during opening. Opening is a process of dilating (expand) followed by eroding (reduce)")
+        detection_open_kernel = st.slider("Open kernel size (odd number)", 1, 31, detection_open_kernel_size, step=2, help = "Bigger kernel size will have larger area of effect during opening. Opening is a process of eroding (reduce) followed by dilating (expand)")
 
-        detection_open_iteration = st.slider("Opening Iterations", 0, 10, detection_open_iteration, help = "Number of iterations to perform opemog action")
+        detection_open_iteration = st.slider("Opening Iterations", 0, 10, detection_open_iteration, help = "Number of iterations to perform opening action")
 
-        detection_closing_kernel = st.slider("Close kernel size (odd number)", 1, 31, detection_close_kernel_size, step=2, help = "Bigger kernel size will have larger area of effect during closing. Closing is a process of eroding (reduce) followed by dilating (expand)")
+        detection_closing_kernel = st.slider("Close kernel size (odd number)", 1, 31, detection_close_kernel_size, step=2, help = "Bigger kernel size will have larger area of effect during closing. Closing is a process of dilating (expand) followed by eroding (reduce)")
 
         detection_closing_iteration = st.slider("closing Iterations", 0, 10, detection_close_iteration, help = "Number of iterations to perform closing action")
 
